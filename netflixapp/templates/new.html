@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Black+Han+Sans&display=swap');
+    .title1 {
+        font-family: 'Black Han Sans', sans-serif;
+        color:brown;
+    }
+    body{
+        background-color: gray;
+    } 
+    button {
+        background-color: rgb(255, 187, 0);
+    }
+</style>
+<h1 class="title1">Introduce your Netflix taste</h1>
+
+<br>
+<form action="{%url 'new' %}" method="post" enctype="multipart/form-data">
+    {%csrf_token%} 
+    <h6>{{form.as_p}}</h6>
+    <button type ="submit">submit</button>
+</form>
+{% endblock %}
