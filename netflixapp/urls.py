@@ -8,4 +8,5 @@ urlpatterns = [
     path('edit/<str:article_id>', edit, name = "edit"),
     path('delete/<str:article_id>', delete, name = "delete"),
     path('search', search, name='search'),
+    path('create_comment/<str:article_id>', create_comment, name="create_comment"),
 ]

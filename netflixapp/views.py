@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator
-from .models import Netflix
-from .forms import netflixForm
+from .models import Netflix, Comment
+from .forms import netflixForm, CommentForm
 
 # Create your views here.
 
@@ -15,7 +15,14 @@ def home(request):
 
 def detail(request, article_id):
     article_detail = get_object_or_404(Netflix, pk = article_id)
-    return render(request, 'detail.html' ,{'article' : article_detail})
+    comments = Comment.objects.filter(netflix_id=article_id, comment_id__isnull=True)
+
+    re_comments = []
+    for comment in comments:
+        re_comments += list(Comment.objects.filter(comment_id=comment.id))
+    
+    form = CommentForm()
+    return render(request, 'detail.html' ,{'article' : article_detail, 'comments' : comments, 're_comments' : re_comments, 'form':form})
 
 def new(request):
     if request.method == 'POST': #폼 다채우고 저장버튼 눌렀을 때
@@ -58,3 +65,22 @@ def search(request):
         return render(request, 'search.html', {'blogs': blogs, 'find':find})
     else:
         return render(request, 'search.html')
+
+def create_comment(request, netflix_id):
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.netflix_id = NetFlix.objects.get(pk=netflix_id)
+            comment.save()
+    return redirect('detail', netflix_id)
+
+def create_re_comment(request, netflix_id, comment_id):
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.netflix_id = NetFlix.objects.get(pk=netflix_id)
+            comment.netflix_id = Comment.objects.get(pk=netflix_id)
+            comment.save()
+    return redirect('/detail/' + str(netflix_id))

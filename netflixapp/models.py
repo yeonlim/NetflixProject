@@ -25,3 +25,9 @@ class Netflix(models.Model):
 
     def summary(self):
         return self.content[:50]
+
+class Comment(models.Model):
+    netflix_id = models.ForeignKey("Netflix", on_delete=models.CASCADE, db_column="netflix_id")
+    comment_id = models.ForeignKey("self", on_delete=models.CASCADE, blank=True, null=True)
+    author = models.CharField(max_length=10)
+    body = models.TextField()
