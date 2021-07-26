@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Shrikhand&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Alfa+Slab+One&display=swap');
+
+    .title1 {
+        color: brown;
+    }
+
+    .card {
+        border: 5px solid brown;
+        font-family: 'Alfa Slab One', 'Black Han Sans', cursive, sans-serifcursive, serif;
+    }
+
+    a:link,
+    a:visited {
+        color: brown;
+        text-decoration: none;
+        display: inline-block;
+        border-radius: 5px;
+        padding: 10px;
+    }
+
+    a:hover,
+    a:active {
+        background-color: rgb(211, 172, 172);
+    }
+
+    a.button1 {
+        background-color: rgb(255, 187, 0);
+    }
+
+    .star {
+        color: yellow;
+    }
+</style>
+{% if not blogs %}
+<h1>검색 결과가 없습니다</h1>
+{% else %}
+{% for post in blogs.all %}
+<div class="col-md-3" style="float: none; margin:0 auto;">
+    <div class="card text-white bg-secondary mb-3" style="max-width: 18rem;">
+        {%if post.img %}
+        <div>
+            <img src="{{post.image_thumbnail.url}}">
+        </div>
+        {%endif%}
+        <div class="card-header">{{post.title}}</div>
+        <div class="card-body">
+            <p class="card-text">{{post.director}} | {{post.genre}}</p>
+            <div class="star">{{post.score}}</div>
+        </div>
+        <div>
+            <a href="{%url 'detail' post.id %}">...more</a>
+        </div>
+    </div>
+</div>
+<br>
+{% endfor %}
+{% endif %}
+{% endblock %}
