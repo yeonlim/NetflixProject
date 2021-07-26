@@ -85,16 +85,6 @@ def create_re_comment(request, article_id, comment_id):
             comment.save()
     return redirect('detail', article_id)
 
-def update_comment(request, comment_id, article_id):
-    my_com = Comment.objects.get(id=comment_id)
-    com_form = CommentForm(instance=my_com)
-    if request.method == "POST":
-        update_form = CommentForm(request.POST, instance = my_com)
-        if update_form.is_valid():
-            update_form.save()
-            return redirect('detail', article_id)
-    return render(request, 'detail', {'com_form':com_form})
-
 def delete_comment(request, comment_id, article_id):
     mycom = Comment.objects.get(id=comment_id)
     mycom.delete()
