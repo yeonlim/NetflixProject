@@ -66,21 +66,37 @@ def search(request):
     else:
         return render(request, 'search.html')
 
-def create_comment(request, netflix_id):
+def create_comment(request, article_id):
     if request.method == 'POST':
         form = CommentForm(request.POST)
         if form.is_valid():
             comment = form.save(commit=False)
-            comment.netflix_id = NetFlix.objects.get(pk=netflix_id)
+            comment.netflix_id = Netflix.objects.get(pk=article_id)
             comment.save()
-    return redirect('detail', netflix_id)
+    return redirect('detail', article_id)
 
-def create_re_comment(request, netflix_id, comment_id):
+def create_re_comment(request, article_id, comment_id):
     if request.method == 'POST':
         form = CommentForm(request.POST)
         if form.is_valid():
             comment = form.save(commit=False)
-            comment.netflix_id = NetFlix.objects.get(pk=netflix_id)
-            comment.netflix_id = Comment.objects.get(pk=netflix_id)
+            comment.netflix_id = Netflix.objects.get(pk=article_id)
+            comment.comment_id = Comment.objects.get(pk=comment_id)
             comment.save()
-    return redirect('/detail/' + str(netflix_id))
+    return redirect('detail', article_id)
+
+def update_comment(request, comment_id, article_id):
+    my_com = Comment.objects.get(id=comment_id)
+    com_form = CommentForm(instance=my_com)
+    if request.method == "POST":
+        update_form = CommentForm(request.POST, instance = my_com)
+        if update_form.is_valid():
+            update_form.save()
+            return redirect('detail', article_id)
+    return render(request, 'detail', {'com_form':com_form})
+
+def delete_comment(request, comment_id, article_id):
+    mycom = Comment.objects.get(id=comment_id)
+    mycom.delete()
+
+    return redirect('detail', article_id)
