@@ -16,7 +16,55 @@
     span {
         font-size: 30px;
     }
+
+    #comment_form {
+        text-align: left;
+        background-color: rgb(104, 104, 104);
+        border-radius: 100px;
+        padding:2% 10%;
+        margin: 3% 5%;
+    }
+
+    input {
+        width: 30%;
+    }
+
+    textarea {
+        resize: none;
+        width:80%; 
+        height:100px;
+    }
+
+    #submit {
+        width:100px;
+    }
+
+    .comment {
+        text-align: left;
+        background-color: rgb(104, 104, 104);
+        border-radius: 100px;
+        padding:2% 10%;
+        margin: 3% 5%;
+    }
+
+    .first_comment{
+        border-radius: 30px;
+        border : 1px solid rgb(27, 27, 27);
+        font-weight: bolder;
+        padding:2% 4%;
+        background-color: rgb(226, 226, 226);
+    }
+
+    .recomment{
+        border-radius: 30px;
+        font-weight: bolder;
+    }
+
+    h4 {
+        text-align: center;
+    }
 </style>
+
 <h1 class=title1>{{article.title}}</h1>
 <div class="d1">
     {{article.director}} | {{article.genre}}
@@ -30,44 +78,46 @@
 <h6>{{article.content}}</h6>
 <a href="{% url 'edit' article.id %}">수정하기</a>
 <a href="{% url 'delete' article.id %}">삭제하기</a>
-<br>
-
-<form method="POST" action="{% url 'create_comment' article.id %}">
-    {% csrf_token %}
-    {{form}}
-    <input type="submit" value="등록">
-    {% for i in article.comment_set.all %}
-    댓글 {{i}}
-    {%endfor%}
-</form>  
+<br><br><br>
+<h3>Write Comment</h3>
+    <form method="POST" action="{% url 'create_comment' article.id %}" id="comment_form">
+        {% csrf_token %}
+        {{form.as_p}}
+        <input type="submit" value="submit" id="submit">
+    </form>
 
 {% for comment in comments %}
 <br>
-<p>작성자: {{comment.author}}</p>
-<p>내용 : {{comment.body}}</p>
+<div class="comment">
+    <h4>Comment</h4>
+    <div class="first_comment">
+        <p>작성자: {{comment.author}}</p>
+        <p>내용 : {{comment.body}}</p>
+        <a href="{% url 'delete_comment' article.id comment.id%}">삭제</a>
+    </div>
 <div>
+    <br><h4>Recomment</h4><br>
     {% for re_comment in re_comments %}
         {% if comment == re_comment.comment_id %}
-            <p>작성자 : {{re_comment.author}}</p>
-            <p>내용 : {{re_comment.body}}</p>
+            <div class="recomment">
+            <p>ㄴ작성자 : {{re_comment.author}}</p>
+            <p>ㄴ내용 : {{re_comment.body}}</p>
+            <a href="{% url 'delete_comment' article.id re_comment.id%}">삭제</a>
+            <hr>
+        </div>
         <br>
         {% endif %}
-    {% endfor %}
-    <span onclick="showCommentForm(this)" value="{{comment.id}}">답댓글쓰기</span>
-    <div id="re_comment_form{{comment.id}}"></div>
+    {% endfor %} 
+
+    <form action = "{% url 'create_re_comment' article.id comment.id%}" method = "post" enctype = "multipart/form-data">
+        <h3>Write Recomment</h3>
+        {% csrf_token %}
+        {{form.as_p}}
+        <button type="submit">대댓글쓰기</button>
+    </form>
+</div>
 </div>
 {% endfor %}
-<script>
-    function showCommentForm(obj) {
-        comment_id = obj.getAttribute('value');
-        url = 'create_re_comment/' + {{article.id}} + '/' + comment_id;
-        document.getElementById('re_comment_form' + comment_id).innerHTML = '
-            <form action="${url}" method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                {{form.as_p}}
-                <button type="submit">대댓글쓰기</button>
-            </form>
-        ';
-    }
-</script>
+
+
 {% endblock %}
