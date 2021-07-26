@@ -47,3 +47,14 @@ def delete(request, article_id):
     article_delete =  Netflix.objects.get(id = article_id)
     article_delete.delete()
     return redirect('home')
+
+def search(request):
+    blogs = Netflix.objects.all().order_by('-id')
+
+    find = request.POST.get('find', "")
+
+    if find:
+        blogs = blogs.filter(title__icontains=find)
+        return render(request, 'search.html', {'blogs': blogs, 'find':find})
+    else:
+        return render(request, 'search.html')
